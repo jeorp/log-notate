@@ -5,6 +5,8 @@ dependencies:
 - text
 - bytestring
 - mtl
+- fast-logger
+- discord-haskell
 - hspec
 
 library:
