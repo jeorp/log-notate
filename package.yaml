@@ -4,9 +4,13 @@ dependencies:
 - base
 - text
 - bytestring
+- aeson
 - mtl
-- fast-logger
+- monad-control
+- monad-logger
 - discord-haskell
+- http-conduit
+- http-client
 - hspec
 
 library:
