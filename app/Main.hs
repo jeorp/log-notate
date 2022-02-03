@@ -3,8 +3,6 @@
 module Main where
 
 import qualified Data.Text as T
-import qualified Data.ByteString.Lazy.Char8 as S8
-import Notate.Hook
 
 import Control.Monad.Logger
 import NotateLogger (runDiscordHookLoggingT)
