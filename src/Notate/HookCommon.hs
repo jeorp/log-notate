@@ -17,5 +17,4 @@ postJson url json = do
         $ setRequestPort 443
         $ setRequestBodyJSON json
         $ request'
-  response <- httpBS request
-  pure $ getResponseBody response
+  getResponseBody <$> httpBS request
