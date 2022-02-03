@@ -8,7 +8,6 @@ dependencies:
 - mtl
 - monad-control
 - monad-logger
-- discord-haskell
 - http-conduit
 - http-client
 - hspec
