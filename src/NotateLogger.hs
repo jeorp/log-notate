@@ -19,12 +19,12 @@ runHookLoggingT f url =  (`runLoggingT` hook)
     hook loc src level msg = 
       let logs =  (B.lines . fromLogStr) $ defaultLogStr loc src level msg
           loop l 
-           | (null l) = return ()
-           | B.length (head l) >= 2000 = B.putStr (head l <> "\n is skiped\n") >> loop (tail l)
-           | otherwise = let len_index = foldl (\a b -> let l = fst a + b + 1 in if l <= 2000 then (l, snd a + 1) else a) (0, 1) $ map B.length logs
-                             ls = splitAt (snd len_index) logs
+           | null l = return ()
+           | snd (head l) >= 2000 = B.putStr (fst (head l) <> "\n is skiped\n") >> loop (tail l)
+           | otherwise = let len_index = foldl (\a b -> let l = fst a + snd b + 1 in if l <= 2000 then (l, snd a + 1) else a) (0, 1) l
+                             ls = splitAt (snd len_index) l
                          in void (f url $ S8.fromStrict $ B.intercalate "\r" logs) >> loop (snd ls)
-      in loop logs
+      in loop $ zip logs (map B.length logs)
 
 runDiscordHookLoggingT :: MonadIO m => String -> LoggingT m a -> m a
 runDiscordHookLoggingT = runHookLoggingT discordHook
