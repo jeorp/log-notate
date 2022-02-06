@@ -46,7 +46,7 @@ foldlC' :: (b -> a -> Cont b b) -> b -> [a] -> Cont b b
 foldlC' = foldlM
 
 len_index :: [(B.ByteString , Int)] -> (Int , Int)
-len_index = foldlC (\a b -> let l = fst a + snd b + 1 in (l, snd a + 1)) ((<= 2000) . fst) (0, 1)
+len_index = foldlC (\b a -> let l = fst b + snd a + 1 in (l, snd b + 1)) ((<= 2000) . fst) (0, 1)
 
 len_indexC :: [(B.ByteString , Int)] -> (Int , Int)
 len_indexC = flip runCont id . lenIndexC
@@ -58,4 +58,3 @@ len_indexC = flip runCont id . lenIndexC
       )
       (0, 1)
 
-      
