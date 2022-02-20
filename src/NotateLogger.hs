@@ -15,24 +15,24 @@ import qualified Data.ByteString.Lazy as S8
 
 import Notate.Hook (discordHook, slackHook)
 
-runHookLoggingT :: MonadIO m => (String -> S8.ByteString -> IO b) -> String -> LoggingT m a -> m a
-runHookLoggingT f url =  (`runLoggingT` hook)
+runHookLoggingT :: MonadIO m => (String -> S8.ByteString -> IO b) -> Bool -> String -> LoggingT m a -> m a
+runHookLoggingT f isSkip url =  (`runLoggingT` hook)
   where
     hook loc src level msg = 
       let logs =  (B.lines . fromLogStr) $ defaultLogStr loc src level msg
           loop l 
            | null l = return ()
-           | snd (head l) >= 2000 = B.putStr (fst (head l) <> "\n is skiped\n") >> loop (tail l)
+           | snd (head l) >= 2000 = if isSkip then B.putStr (fst (head l) <> "\n is skiped\n") else void (f url (S8.fromStrict (fst $ head l))) >> loop (tail l)
            | otherwise = let len_index = len_indexC l
                              ls = splitAt (snd len_index) l
                          in void (f url $ S8.fromStrict $ B.intercalate "\r" logs) >> loop (snd ls)
       in loop $ zip logs (map B.length logs)
 
 runDiscordHookLoggingT :: MonadIO m => String -> LoggingT m a -> m a
-runDiscordHookLoggingT = runHookLoggingT discordHook
+runDiscordHookLoggingT = runHookLoggingT discordHook True
 
 runSlackHookLoggingT :: MonadIO m => String -> LoggingT m a -> m a
-runSlackHookLoggingT = runHookLoggingT slackHook
+runSlackHookLoggingT = runHookLoggingT slackHook False
 
 foldlC :: (b -> a -> b) -> (b -> Bool) -> b -> [a] -> b
 foldlC cf pred b (x:xs) = 
